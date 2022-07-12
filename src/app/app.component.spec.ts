@@ -1,31 +1,68 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormlyBootstrapModule } from '@ngx-formly/bootstrap';
+import { FormlyModule } from '@ngx-formly/core';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
+  let fixture: ComponentFixture<AppComponent>;
+  let component: AppComponent;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
+      imports: [
+        FormlyModule.forRoot(),
+        FormlyBootstrapModule,
+        ReactiveFormsModule,
       ],
+      declarations: [AppComponent],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
   });
 
-  it(`should have as title 'formly-bug'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('formly-bug');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  it('BUG', () => {
+    component.fields = [
+      {
+        key: 'bla.foo', // nested key + required causes bug
+        type: 'select',
+        templateOptions: {
+          required: true,
+        },
+      },
+    ];
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain('formly-bug app is running!');
+    expect(component.form.get('bla')?.value).toEqual({ foo: null });
+  });
+
+  it('OK 1', () => {
+    component.fields = [
+      {
+        key: 'bla.foo',
+        type: 'select',
+        templateOptions: {
+          required: false,
+        },
+      },
+    ];
+    fixture.detectChanges();
+    expect(component.form.get('bla')?.value).toEqual({ foo: null });
+  });
+
+  it('OK 2', () => {
+    component.fields = [
+      {
+        key: 'bla',
+        type: 'select',
+        templateOptions: {
+          required: true,
+        },
+      },
+    ];
+    fixture.detectChanges();
+    expect(component.form.get('bla')?.value).toEqual(null);
   });
 });
