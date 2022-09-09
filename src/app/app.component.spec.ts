@@ -24,45 +24,11 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('BUG', () => {
-    component.fields = [
-      {
-        key: 'bla.foo', // nested key + required causes bug
-        type: 'select',
-        templateOptions: {
-          required: true,
-        },
-      },
-    ];
-    fixture.detectChanges();
-    expect(component.form.get('bla')?.value).toEqual({ foo: null });
-  });
-
-  it('OK 1', () => {
-    component.fields = [
-      {
-        key: 'bla.foo',
-        type: 'select',
-        templateOptions: {
-          required: false,
-        },
-      },
-    ];
-    fixture.detectChanges();
-    expect(component.form.get('bla')?.value).toEqual({ foo: null });
-  });
-
-  it('OK 2', () => {
-    component.fields = [
-      {
-        key: 'bla',
-        type: 'select',
-        templateOptions: {
-          required: true,
-        },
-      },
-    ];
-    fixture.detectChanges();
-    expect(component.form.get('bla')?.value).toEqual(null);
+  describe('valueChanges bug', () => {
+    it('should not log', () => {
+      spyOn(console, 'log');
+      fixture.detectChanges();
+      expect(console.log).not.toHaveBeenCalled();
+    });
   });
 });
