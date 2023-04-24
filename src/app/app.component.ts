@@ -9,6 +9,14 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 })
 export class AppComponent {
   form = new FormGroup({});
-  model = {};
-  fields: FormlyFieldConfig[] = [];
+  model = { country: 1 };
+  fields: FormlyFieldConfig[] = [
+    {
+      key: 'country',
+      type: 'select',
+      props: {
+        options: [{ value: 1, label: 'a' }],
+      },
+    },
+  ];
 }
